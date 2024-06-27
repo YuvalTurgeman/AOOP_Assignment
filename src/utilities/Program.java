@@ -13,8 +13,6 @@ import game.entities.sportsman.Snowboarder;
 import game.entities.sportsman.WinterSportsman;
 import game.enums.*;
 
-import java.lang.reflect.Constructor;
-
 /**
  * @author Itzhak Eretz Kdosha
  * Main class(run demo)
@@ -29,7 +27,7 @@ public class Program {
 		Skier skier4 = new Skier("sk4",29, Gender.MALE, 4.6,75, Discipline.DOWNHILL);
 		Skier skier5 = new Skier("sk5",50, Gender.MALE, 3.3,80, Discipline.DOWNHILL);
 
-		WinterArena arena = new WinterArena(1000,SnowSurface.CRUD,WeatherCondition.SUNNY);
+		WinterArena arena = new WinterArena(1000, SnowSurface.CRUD, WeatherCondition.SUNNY);
 
 		SkiCompetition competition = new SkiCompetition(arena,3,Discipline.DOWNHILL, League.ADULT,Gender.MALE);
 		competition.addCompetitor(skier1);
