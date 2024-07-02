@@ -1,4 +1,6 @@
 package game.entities.sportsman;
 
-public class WinterSportsman {
+import game.competition.Competitor;
+
+public class WinterSportsman extends Sportsman implements Competitor {
 }

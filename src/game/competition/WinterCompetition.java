@@ -1,4 +1,4 @@
 package game.competition;
 
-public class WinterCompetition {
+public class WinterCompetition extends Competition{
 }

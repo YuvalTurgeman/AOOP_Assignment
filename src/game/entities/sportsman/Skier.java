@@ -1,4 +1,6 @@
 package game.entities.sportsman;
 
-public class Skier {
+import game.arena.WinterArena;
+
+public class Skier extends WinterSportsman {
 }

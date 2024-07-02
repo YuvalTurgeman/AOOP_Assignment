@@ -19,7 +19,7 @@ public class WinterArena implements IArena{
 
     @Override
     public Double getFriction() {
-        return 0.0;//todo: implement
+        return surface.getFriction();
     }
 
     @Override

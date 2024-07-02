@@ -1,9 +1,9 @@
 package game.competition;
 
-public class Competitor {
+import game.entities.IMobileEntity;
 
-    public void initRace(){
-        //todo: implement
-    }
+public interface Competitor extends IMobileEntity {
+
+    public void initRace();
 
 }

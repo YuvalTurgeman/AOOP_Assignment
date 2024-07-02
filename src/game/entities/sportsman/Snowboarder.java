@@ -1,4 +1,4 @@
 package game.entities.sportsman;
 
-public class Snowboarder {
+public class Snowboarder extends WinterSportsman{
 }
