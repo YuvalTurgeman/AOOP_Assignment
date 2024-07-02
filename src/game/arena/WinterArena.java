@@ -6,11 +6,11 @@ import game.enums.WeatherCondition;
 
 public class WinterArena implements IArena{
 
-    private Double length;//maybe final?
+    private double length;//maybe final?
     private SnowSurface surface;
     private WeatherCondition condition;
 
-    public WinterArena(Double len, SnowSurface sur, WeatherCondition wc){
+    public WinterArena(double len, SnowSurface sur, WeatherCondition wc){
         this.length = len;
         this.surface = sur;
         this.condition = wc;
@@ -18,7 +18,7 @@ public class WinterArena implements IArena{
 
 
     @Override
-    public Double getFriction() {
+    public double getFriction() {
         return surface.getFriction();
     }
 

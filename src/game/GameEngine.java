@@ -6,39 +6,33 @@ import game.entities.sportsman.Sportsman;
 
 public class GameEngine {
     //fields
-    private Competition comp;
-    private GameEngine instance = null;
+    private static GameEngine instance = null;
 
     private GameEngine(){}
 
     //methods
-    public GameEngine getInstance(){
-        if(this.instance == null)
-            this.instance = new GameEngine();
-        return this.instance;
+    public static GameEngine getInstance(){
+        if(instance == null)
+            instance = new GameEngine();
+        return instance;
     }
 
-    public boolean setArena(Object arena){
-        //todo:implement
-        return comp.setArena();
-    }//i think this is the correct implementation
-
-    public void initRace(){
-        //todo:implement
-        comp.initRace();
+    public void startRace(Competition comp){
+        //todo:implements
     }
 
-    public void addRacer(Object newRacer){//not sure this is the correct return type
-        //todo:implement
-        comp.add((Sportsman)newRacer);
+    public void printResults(Competition comp){
+        //todo:implements
     }
 
-    public void setComp(Competition comp){
+    public boolean equals(Object other){
         //todo:implement
+        return true;
     }
 
-    public void startRace(){
-        //todo:implement
+    public String toString(){
+        //implement
+        return "";
     }
 
 }

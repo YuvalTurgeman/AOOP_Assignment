@@ -1,57 +1,72 @@
 package game.competition;
+import game.arena.IArena;
 import game.arena.WinterArena;
 import game.entities.sportsman.Sportsman;
-import game.enums.ArenaType;
+
+import java.util.ArrayList;
 
 public abstract class Competition {
 
     //Fields //make getters and setters
-    private ArenaType arenaType;
-    private Object currentArena;
-    private double minAge;
-    private  String gender;
-    private  String league;
-    private String qualification;
-
-
+    private IArena arena;
+    private int maxCompetitors;
+    ArrayList<Competitor> activeCompetitors;
+    ArrayList<Competitor> finishedCompetitors;
 
 
     //ctor
+    public Competition(IArena arena, int maxCompetitors){
+        this.arena = arena;
+        this.maxCompetitors = maxCompetitors;
+        activeCompetitors = new ArrayList<Competitor>();
+        finishedCompetitors = new ArrayList<Competitor>();
+    }//check maxCompetitors>0?
 
-    public Competition(double minAge, String league, String gender, String qualification) {
-        this.minAge = minAge;
-        this.league = league;
-        this.gender = gender;
-        this.qualification = qualification;
-    }//add checks
+    //getters + setters:
 
-    public Competition(Competition comp){
-        this.gender = comp.gender;
-        this.gender = comp.gender;
-        this.league = comp.league;
-        this.qualification = comp.qualification;
-    }// is it supposed to be like this? without checks?
+    public IArena getArena() {
+        return arena;
+    }
+
+    public void setArena(IArena arena) {
+        this.arena = arena;
+    }
+
+    public int getMaxCompetitors() {
+        return maxCompetitors;
+    }
+
+    public void setMaxCompetitors(int maxCompetitors) {
+        this.maxCompetitors = maxCompetitors;
+    }
+
+    public ArrayList<Competitor> getActiveCompetitors() {
+        return activeCompetitors;
+    }
+
+    public void setActiveCompetitors(ArrayList<Competitor> activeCompetitors) {
+        this.activeCompetitors = activeCompetitors;
+    }
+
+    public ArrayList<Competitor> getFinishedCompetitors() {
+        return finishedCompetitors;
+    }
+
+    public void setFinishedCompetitors(ArrayList<Competitor> finishedCompetitors) {
+        this.finishedCompetitors = finishedCompetitors;
+    }
 
     //methods
-    public void initRace(){
-
-    }
-
-    public boolean setArena(Object arena){
-        //todo:implement correctly
-        if(currentArena instanceof WinterArena)
-            ((WinterArena)currentArena).initRace();//change in the future to include all kinds of arenas
-    }// i don't understand why to do all these checks and castings, why not to make Arena abstract class?
-
-    public boolean validCompetitor(Sportsman sportsman){
+    public boolean isValidCompetitor(Competitor competitor){
         //todo:implement
         return true;
     }
 
-    public boolean add(Sportsman sportsman){
+    public void addCompetitor(Competitor competitor){
         //todo:implement
-        return true;
-    }
+
+    }//why void and not boolean?
+
 
     public boolean playTurn(){
         //todo:implement
@@ -59,55 +74,9 @@ public abstract class Competition {
         return true;
     }
 
-
-    //getters and setters:
-
-    public ArenaType getArenaType() {
-        return arenaType;
-    }
-
-    public Object getCurrentArena() {
-        return currentArena;
-    }
-
-    public double getMinAge() {
-        return minAge;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getLeague() {
-        return league;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setArenaType(ArenaType arenaType) {
-        this.arenaType = arenaType;
-    }
-
-    public void setCurrentArena(Object currentArena) {
-        this.currentArena = currentArena;
-    }
-
-    public void setMinAge(double minAge) {
-        this.minAge = minAge;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setLeague(String league) {
-        this.league = league;
-    }
-
-    public void setQualification(String qualification) {
-        this.qualification = qualification;
+    public boolean hasActiveCompetitors(){
+        //todo:implement
+        return !activeCompetitors.isEmpty();
     }
 
     //toString + equals

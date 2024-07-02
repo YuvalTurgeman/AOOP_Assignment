@@ -4,7 +4,7 @@ import game.entities.IMobileEntity;
 
 public interface IArena {
 
-    Double getFriction();
+    double getFriction();
 
     Boolean isFinished(IMobileEntity me);
 }

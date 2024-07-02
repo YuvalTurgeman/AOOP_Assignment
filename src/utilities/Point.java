@@ -6,8 +6,8 @@ import java.util.Objects;
 public class Point {
 
     //Fields:
-    private double x;//should be final
-    private double y;//should be final
+    private double x;
+    private double y;
 
     //ctor
     public Point(double x, double y) {
