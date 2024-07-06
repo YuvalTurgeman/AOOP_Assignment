@@ -1,26 +1,33 @@
+/**
+ * @author Yuval Turgeman id: 209299205
+ * represents an abstract class Competition
+ * @fields: arena, maxCompetitors, activeCompetitors, finishedCompetitors
+ * @methods: ctor, getters + setters, abstract isValidCompetitor, addCompetitor, playTurn, hasActiveCompetitors, toString
+ **/
+
 package game.competition;
 import game.arena.IArena;
-import game.arena.WinterArena;
-import game.entities.sportsman.Sportsman;
+import game.entities.sportsman.Skier;
 
 import java.util.ArrayList;
 
 public abstract class Competition {
 
-    //Fields //make getters and setters
+    //Fields + ctor
     private IArena arena;
     private int maxCompetitors;
     ArrayList<Competitor> activeCompetitors;
     ArrayList<Competitor> finishedCompetitors;
 
 
-    //ctor
     public Competition(IArena arena, int maxCompetitors){
         this.arena = arena;
+        if(maxCompetitors <=0)
+            throw new IllegalArgumentException("cannot create competition, amount of maximum competitors must be above 0");
         this.maxCompetitors = maxCompetitors;
         activeCompetitors = new ArrayList<Competitor>();
         finishedCompetitors = new ArrayList<Competitor>();
-    }//check maxCompetitors>0?
+    }
 
     //getters + setters:
 
@@ -37,6 +44,8 @@ public abstract class Competition {
     }
 
     public void setMaxCompetitors(int maxCompetitors) {
+        if(maxCompetitors <=0)
+            throw new IllegalArgumentException("cannot set max competitors, amount of maximum competitors must be above 0");
         this.maxCompetitors = maxCompetitors;
     }
 
@@ -57,39 +66,38 @@ public abstract class Competition {
     }
 
     //methods
-    public boolean isValidCompetitor(Competitor competitor){
-        //todo:implement
-        return true;
+    public abstract boolean isValidCompetitor(Competitor comp);
+
+    public void addCompetitor(Competitor comp){
+        if(activeCompetitors.size() == maxCompetitors)
+            throw new IllegalStateException("cannot add another competitor, Amount of competitors is at it's maximum");
+        if(!isValidCompetitor(comp))
+            throw new IllegalArgumentException("cannot add a competitor of type " + comp.toString() + " to arena of type " + arena.toString());//may need to change
+        activeCompetitors.add(comp);
     }
 
-    public void addCompetitor(Competitor competitor){
-        //todo:implement
 
-    }//why void and not boolean?
-
-
-    public boolean playTurn(){
-        //todo:implement
-        //return currentArena.playTurn, maybe playTurn()
-        return true;
+    public void playTurn(){
+        ArrayList<Competitor> tmpActive = new ArrayList<>(activeCompetitors);
+        for(Competitor comp: tmpActive){
+            comp.move(arena.getFriction());
+            if(arena.isFinished(comp)){
+                finishedCompetitors.add(comp);
+                activeCompetitors.remove(comp);
+            }
+        }
     }
 
     public boolean hasActiveCompetitors(){
-        //todo:implement
         return !activeCompetitors.isEmpty();
     }
 
-    //toString + equals
+    //toString
 
     public String toString(){
-        //todo:implement
-        return "";
+        return "Arena of type: " + arena.getClass() +
+                "Amount of maximum competitors is: " + getMaxCompetitors() +
+                "List of Active competitors: " + activeCompetitors.toString() +
+                "List of finished competitors: " + finishedCompetitors.toString();
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        //todo:implement
-        return true;
-    }
-
 }

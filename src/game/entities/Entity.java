@@ -1,8 +1,17 @@
+/**
+ * @author Yuval Turgeman id: 209299205
+ * represesnts an abstract class Entity
+ * @fields: location
+ * @methods: ctors, getters + setters, toString
+ **/
+
 package game.entities;
 
 import utilities.Point;
 
 public abstract class Entity {
+
+    //fields + ctors
     private Point location;
 
     public Entity(){
@@ -13,6 +22,13 @@ public abstract class Entity {
         location = new Point(location.getX(), location.getY());//deep copy
     }
 
+    public Entity(double x, double y){
+        if(x<0)
+            throw new IllegalArgumentException("can't create entity, cant set negative x");
+        location = new Point(x,y);
+    }
+
+    //getters + setters
     public Point getLocation() {
         return location;
     }
@@ -21,16 +37,15 @@ public abstract class Entity {
         this.location = new Point(location.getX(), location.getY());//not sure this deep copy is necessary
     }
 
-
-    public String toString(){
-        //todo:implement
-        return "";
+    public void setLocation(double x, double y){
+        if(x<0)
+            throw new IllegalArgumentException("can't set location of entity to a negative x");
     }
 
-    //dont think that equals necessary here because there will never be an instance of Entity
-    public boolean equals(Object other){
-        //todo:implement
-        return true;
+    //toString
+    public String toString(){
+        return "this is a class type: " + getClass() +
+                " the location is: " + getLocation();
     }
 
 }

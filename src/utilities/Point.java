@@ -1,3 +1,9 @@
+/**
+ * @author Yuval Turgeman id: 209299205
+ * represents a Point class with two dimensionla quardinates.
+ * @fields: x, y
+ * @methods: ctors, getters + setters, equals, toString.
+ **/
 
 package utilities;
 
@@ -12,7 +18,7 @@ public class Point {
     //ctor
     public Point(double x, double y) {
         if(x < 0 || x>1000000 || y < 0 || y > 800)
-            throw new IllegalArgumentException("Point coordinates out of bounds"); //todo: exception type will be changed in the future
+            throw new IllegalArgumentException("Point coordinates out of bounds");
         this.x = x;
         this.y = y;
     }
@@ -24,6 +30,18 @@ public class Point {
 
     public double getY() {
         return y;
+    }
+
+    public void setX(double x){
+        if(x < 0 || x>1000000)
+            throw new IllegalArgumentException("Point coordinates out of bounds");
+        this.x = x;
+    }
+
+    public void setY(double y){
+        if(y < 0 || y > 800)
+            throw new IllegalArgumentException("Point coordinates out of bounds");
+        this.y = y;
     }
 
     @Override

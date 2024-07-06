@@ -1,3 +1,9 @@
+/**
+ * @author Yuval Turgeman id: 209299205
+ * represesnts an abstract class of type Sportsman, extends MobileEntity
+ *
+ **/
+
 package game.entities.sportsman;
 
 import game.entities.MobileEntity;
@@ -5,7 +11,7 @@ import game.enums.Gender;
 
 public abstract class Sportsman extends MobileEntity {
 
-    //make getters and setters
+    //fields + ctor
     private String name;
     private double age;
     private Gender gender;
@@ -17,7 +23,7 @@ public abstract class Sportsman extends MobileEntity {
         this.gender = gender;
     }
 
-    //getters and setters, check input at setters?
+    //getters + setters
 
     public String getName() {
         return name;
@@ -27,11 +33,13 @@ public abstract class Sportsman extends MobileEntity {
         this.name = name;
     }
 
-    public Double getAge() {
+    public double getAge() {
         return age;
     }
 
-    public void setAge(Double age) {
+    public void setAge(double age) {
+        if(age <=0 )
+            throw new IllegalArgumentException("Age should be above 0");
         this.age = age;
     }
 
@@ -43,10 +51,13 @@ public abstract class Sportsman extends MobileEntity {
         this.gender = gender;
     }
 
-    // not sure this class needs equals because there will never be an instance of Sportsman
+    //toString
     public String toString(){
-        //todo:implement
-        return "";
+        return  super.toString() + " This is class type: " + getClass() +
+                " the name is: " + getName() +
+                " the age is: " + getAge() +
+                " the gender is: " + getGender();
     }
+
 
 }
