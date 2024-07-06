@@ -25,7 +25,7 @@ public class Snowboarder extends WinterSportsman{
                     getGender() == ((Snowboarder)other).getGender() &&
                     getMaxSpeed() == ((Snowboarder)other).getSpeed() &&
                     getSpeed() == ((Snowboarder)other).getSpeed() &&
-                    getName() == ((Snowboarder)other).getName() &&
+                    getName().equals(((Snowboarder)other).getName()) &&
                     getLocation() == ((Snowboarder)other).getLocation();
         }
         return false;
