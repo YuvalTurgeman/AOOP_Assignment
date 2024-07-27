@@ -9,6 +9,7 @@ import game.competition.SkiCompetition;
 import game.entities.sportsman.Skier;
 import game.entities.sportsman.Snowboarder;
 import game.enums.*;
+import game.GUI.*;
 
 /**
  * @author Itzhak Eretz Kdosha
@@ -55,4 +56,6 @@ public class Program {
 		GameEngine.getInstance().startRace(competition);
 	}
 
-}
+//		new Window();
+	}
+

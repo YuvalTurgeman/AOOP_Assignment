@@ -6,5 +6,18 @@ package game.enums;
 public enum WeatherCondition {
     SUNNY,
     CLOUDY,
-    STORMY
+    STORMY;
+
+    public static WeatherCondition convert(String s) throws NoSuchFieldException {
+        switch (s){
+            case "Sunny":
+                return WeatherCondition.SUNNY;
+            case "Cloudy":
+                return WeatherCondition.CLOUDY;
+            case "Stormy":
+                return WeatherCondition.STORMY;
+            default:
+                throw new NoSuchFieldException("Weather Condition Does Not Exist");
+        }
+    }
 }
