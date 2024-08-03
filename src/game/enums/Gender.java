@@ -11,7 +11,7 @@ public enum Gender {
         switch (s){
             case "Male":
                 return Gender.MALE;
-            case "Adult":
+            case "Female":
                 return Gender.FEMALE;
             default:
                 throw new NoSuchFieldException("Gender Does Not Exist");

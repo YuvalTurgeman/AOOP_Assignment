@@ -1,3 +1,9 @@
+/**
+ * @author Yuval Turgeman id: 209299205
+ *  represensts a class of type ImagePanel, extends JPanel.
+ * @methods: ctor, setBackgroundImage, paintComponents.
+ **/
+
 package game.View;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -5,15 +11,18 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+
 public class ImagePanel extends JPanel {
+    private Image backgroundImage;
 
-    private Image image;
+    public ImagePanel() {
+        // Default constructor, no image set initially
+    }
 
-    public ImagePanel(){}
-
-    public ImagePanel(String imagePath) {
+    public void setBackgroundImage(String fileName) {
         try {
-            image = ImageIO.read(new File(imagePath));
+            this.backgroundImage = new ImageIcon(fileName).getImage();
+            repaint(); // Repaint the panel to show the new background image
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -22,15 +31,8 @@ public class ImagePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-    }
-
-    public void changeImage(String imagePath){
-        try {
-            image = ImageIO.read(new File(imagePath));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("NOTTT!");
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
     }
 }

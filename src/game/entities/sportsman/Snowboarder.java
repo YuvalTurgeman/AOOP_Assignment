@@ -32,6 +32,6 @@ public class Snowboarder extends WinterSportsman{
     }
 
     public String toString(){
-        return super.toString() + " this is class " + getClass();
+        return String.format("This is %s, %s, %s", this.getClass(), this.getName(), this.getLocation());
     }
 }
