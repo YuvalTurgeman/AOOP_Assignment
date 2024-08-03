@@ -246,7 +246,12 @@ public class ProgramWindow extends JFrame implements Observer {
         viewStartInfoPanel.getBtnStartCompetition().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
+                try{
+                    if (arena == null)
+                        throw new NullPointerException("cannot start competition because arena does not exist");
+                    if (competition == null)
+                        throw new NullPointerException("cannot start competition because competition does not exist");
+
                     if (competition.getIsRunning())
                         throw new RuntimeException("Competition is already running");
                     if (competition.getIsFinished())
@@ -272,7 +277,7 @@ public class ProgramWindow extends JFrame implements Observer {
                     if (competition == null)
                         throw new NullPointerException("cannot show info because competition does not exist");
                     if (competition.getActiveCompetitors().isEmpty() && !competition.getIsFinished())
-                        throw new RuntimeException("Please create a competitor in order to see competitor's info");
+                        throw new NullPointerException("Please create a competitor in order to see competitor's info");
 
                     if (infoFrame == null) {
                         infoFrame = new JFrame("Competitors Information");

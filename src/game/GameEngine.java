@@ -32,41 +32,6 @@ public class GameEngine {
         return instance;
     }
 
-//    public void startRace(Competition comp) {
-//        int steps = 1;
-//        for (Competitor competitor: comp.getActiveCompetitors())
-//            competitor.initRace();
-//
-//        while(comp.hasActiveCompetitors()){
-//            try {
-//                Thread.sleep(30);
-//            }catch( InterruptedException ex){
-//
-//            }
-//            comp.playTurn();
-//            steps++;
-//        }
-//        System.out.println("Race finished in " + steps + " steps");
-//        printResults(comp);
-//    }
-
-//    public void startRace(Competition comp) {
-//        IArena arena = comp.getArena();
-//        for (Competitor competitor : comp.getActiveCompetitors())
-//            competitor.initRace(arena);
-//
-//        comp.startCompetition(comp.getArena());
-//        while (comp.hasActiveCompetitors()) {
-//            try {
-//                Thread.sleep(30);
-//            } catch (InterruptedException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//        System.out.println("Race finished!");
-//        printResults(comp);
-//    }
-
     public void startRace(Competition comp) {
         isRaceRunning = true;
         comp.startCompetition(comp.getArena());  // Start the competition which now includes periodic position printing
@@ -93,7 +58,7 @@ public class GameEngine {
         double speed = sportsman.getNewSpeed(); // Retrieve the updated speed
         utilities.Point currentLocation = competitor.getLocation();
         currentLocation.setY(currentLocation.getY() + speed); // Move based on the updated speed
-//        currentLocation.setX(currentLocation.getX()); // Move based on the updated speed
+
 
         sportsman.setLocation(currentLocation);
 
@@ -115,15 +80,15 @@ public class GameEngine {
 
     }
 
-    private boolean getRaceRunning(){
-        return getRaceRunning();
-    }
-    //toString (singleton doesn't need equals)
-    public String toString(){
-        if(instance == null)
-            return "this game instance is not initialized";
-        return "this is a singleton class of type " + getClass() + " it's info is: " + getInstance().toString();
-    }
+//    private boolean getRaceRunning(){
+//        return getRaceRunning();
+//    }
+//    //toString (singleton doesn't need equals)
+//    public String toString(){
+//        if(instance == null)
+//            return "this game instance is not initialized";
+//        return "this is a singleton class of type " + getClass() + " it's info is: " + getInstance().toString();
+//    }
 
 }
 
