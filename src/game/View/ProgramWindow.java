@@ -52,7 +52,7 @@ public class ProgramWindow extends JFrame implements Observer {
     private DefaultTableModel tableModel;
     private JTable showInfoTable;
 
-    private int competitorId;
+    private Integer competitorId;
 
     // Constructor
     public ProgramWindow() {
@@ -82,7 +82,7 @@ public class ProgramWindow extends JFrame implements Observer {
 
             //infoTable settings
             showInfoTable = new JTable();
-            tableModel = new DefaultTableModel(new Object[]{"Position", "Name", "Speed", "Max Speed", "Location", "Finished"}, 0);
+            tableModel = new DefaultTableModel(new Object[]{"id","Position", "Name", "Speed", "Max Speed", "Location", "Finished"}, 0);
             showInfoTable.setModel(tableModel);
             TableColumnModel columnModel = showInfoTable.getColumnModel();
             columnModel.getColumn(0).setPreferredWidth(20);             // Position Column
@@ -165,6 +165,7 @@ public class ProgramWindow extends JFrame implements Observer {
                         field.setBackgroundImage(null);
                     }
                     field.repaint();
+//                    updateInfoTable();
 
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(viewArenaPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -198,10 +199,12 @@ public class ProgramWindow extends JFrame implements Observer {
 
                     if (competition != null) {
                         clearCompetitorIcons(); // clears icons from screen
+                        competitorId = 1;
                         if (competition.getMaxCompetitors() == 20) {
                             setSize(new Dimension(1200, (int) ((WinterArena) arena).getLength()));
                         }
                         JOptionPane.showMessageDialog(viewCompetitionPanel, "Competition Created Successfully");
+                        updateInfoTable();
 //                        System.out.println("Competition created successfully");
                     }
                 } catch (NullPointerException ex) {
@@ -223,11 +226,20 @@ public class ProgramWindow extends JFrame implements Observer {
                         throw new RuntimeException("the race isnt over yet");
                     }
 
+
+
 //                    if (competition != null && competition.getIsFinished()) {
 //                        if (arena == null)
 //                            throw new RuntimeException("Please create a new Arena first");
 //                    }
+
                     String input = JOptionPane.showInputDialog(null, "Enter number of maximum competitors :", "Input Max Competitors", JOptionPane.QUESTION_MESSAGE);
+                    if(input.isEmpty()){
+                        JOptionPane.showMessageDialog(viewCompetitionPanel, "please specify max competitors!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+
 
                     arena = arenaFactory.buildArena("Winter", "700","Powder","Sunny"); //use of ArenaFactory to build a default arena
                     setSize(new Dimension(1000, (int) ((WinterArena) arena).getLength()));
@@ -242,10 +254,27 @@ public class ProgramWindow extends JFrame implements Observer {
 
                     if (competition != null) {
                         clearCompetitorIcons(); // clears icons from screen
+                        competitorId = 1;
                         if (competition.getMaxCompetitors() == 20) {
                             setSize(new Dimension(1200, (int) ((WinterArena) arena).getLength()));
                         }
-                        JOptionPane.showMessageDialog(viewCompetitionPanel, "Competition Created Successfully");
+
+                        for(int i=0;i<competition.getMaxCompetitors();i++){
+                            Competitor competitor = vm_competitorPanel.createDefaultCompetitor("Default_Name_"+String.valueOf(competitorId),competitorId);
+                            competition.addCompetitor(competitor);
+
+                            // Add the competitor icon
+                            String iconPath = determineIconPath(competitor);
+                            setCompetitorIcon(competitor, iconPath);
+                            System.out.println(competition.getActiveCompetitors().size());
+//                            updateInfoTable();
+                            competitorId++;
+                        }
+
+
+
+                    JOptionPane.showMessageDialog(viewCompetitionPanel, "Competition Created Successfully");
+                    updateInfoTable();
 //                        System.out.println("Competition created successfully");
                     }
                 } catch (NullPointerException ex) {
@@ -285,14 +314,17 @@ public class ProgramWindow extends JFrame implements Observer {
                             ((WinterCompetition) vm_competitionPanel.getCompetition()).getGender(),
                             ((WinterCompetition) vm_competitionPanel.getCompetition()).getDiscipline(),
                             vm_competitionPanel.getCompetition().getClass(),
-                            competitorId//todo:take care of competitorId resets and increase
+                            competitorId++//todo:take care of competitorId resets and increase
                     );
 
+
                     competition.addCompetitor(competitor);
+
                     // Add the competitor icon
                     String iconPath = determineIconPath(competitor);
                     setCompetitorIcon(competitor, iconPath);
                     System.out.println(competition.getActiveCompetitors().size());
+                    updateInfoTable();
 
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(viewCompetitorPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -425,7 +457,7 @@ public class ProgramWindow extends JFrame implements Observer {
         SwingUtilities.invokeLater(() -> {
             // Ensure table model is initialized correctly
             if (tableModel.getColumnCount() != 6) {
-                tableModel.setColumnIdentifiers(new Object[]{"Position", "Name", "Speed", "Max Speed", "Location", "Finished"});
+                tableModel.setColumnIdentifiers(new Object[]{"id","Position", "Name", "Speed", "Max Speed", "Location", "Finished"});
             }
 
             // Clear existing rows
@@ -437,6 +469,7 @@ public class ProgramWindow extends JFrame implements Observer {
                 for (Competitor cmp : competition.getActiveCompetitors()) {
                     WinterSportsman comp = (WinterSportsman) cmp;
                     Object[] rowData = {
+                            comp.getID(),
                             index++,
                             comp.getName(),
                             comp.getSpeed(),
@@ -455,6 +488,7 @@ public class ProgramWindow extends JFrame implements Observer {
                 for (Competitor cmp : competition.getFinishedCompetitors()) {
                     WinterSportsman comp = (WinterSportsman) cmp;
                     Object[] rowData = {
+                            comp.getID(),
                             index++,
                             comp.getName(),
                             comp.getSpeed(),

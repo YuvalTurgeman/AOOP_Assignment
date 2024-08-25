@@ -33,4 +33,11 @@ public class VM_CompetitorPanel {
         }
         return competitor;
     }
+
+    public Competitor createDefaultCompetitor(String name,int id){
+        Competitor competitor;//todo:maybe make it a field
+        competitor = new Skier(name, 15, Gender.MALE,
+                5, 25, Discipline.SLALOM, id);
+        return competitor;
+    }
 }
