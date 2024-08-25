@@ -17,16 +17,16 @@ import game.enums.Gender;
 
 public class VM_CompetitorPanel {
 
-    public Competitor createCompetitor(String name, String age, String maxSpeed, String acceleration, Gender gender, Discipline discipline, Class<?> instType){
+    public Competitor createCompetitor(String name, String age, String maxSpeed, String acceleration, Gender gender, Discipline discipline, Class<?> instType, int id){
         Competitor competitor;
         switch (instType.getName()) {
             case "game.competition.SkiCompetition":
                 competitor = new Skier(name, Double.parseDouble(age), gender,
-                        Double.parseDouble(acceleration), Double.parseDouble(maxSpeed), discipline);
+                        Double.parseDouble(acceleration), Double.parseDouble(maxSpeed), discipline, id);
                 break;
             case "game.competition.SnowboardCompetition":
                 competitor = new Snowboarder(name, Double.parseDouble(age), gender,
-                        Double.parseDouble(acceleration), Double.parseDouble(maxSpeed), discipline);
+                        Double.parseDouble(acceleration), Double.parseDouble(maxSpeed), discipline, id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown competition type: " + instType.getName());

@@ -12,8 +12,8 @@ import game.enums.Gender;
 public class Snowboarder extends WinterSportsman{
 
     //ctor
-    public Snowboarder(String name, double age, Gender gender, double acceleration, double maxSpeed, Discipline discipline) {
-        super(maxSpeed, acceleration, name, age, gender, discipline);
+    public Snowboarder(String name, double age, Gender gender, double acceleration, double maxSpeed, Discipline discipline, int id) {
+        super(maxSpeed, acceleration, name, age, gender, discipline, id);
     }
 
     //equals + toString

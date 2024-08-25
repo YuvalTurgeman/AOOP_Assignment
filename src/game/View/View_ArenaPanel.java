@@ -19,6 +19,8 @@ public class View_ArenaPanel extends JPanel{
     private JButton btnBuildArena;
     private JPanel arenaPanel;
 
+    private JComboBox<String> arenaType;
+
 
     public View_ArenaPanel() {
         Border lineBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
@@ -26,6 +28,8 @@ public class View_ArenaPanel extends JPanel{
         arenaPanel = new JPanel(new GridLayout(0, 1));
         arenaPanel.setBorder(lineBorder);
         JLabel LBuildArena = new JLabel("Build Arena");
+        JLabel LType = new JLabel("Arena Type:");
+        arenaType = new JComboBox<>(new String[]{"Winter","Summer"});
         JLabel LLength = new JLabel("Arena Length:");
         txLength = new JTextField();
         txLength.setText("700");
@@ -35,6 +39,8 @@ public class View_ArenaPanel extends JPanel{
         weatherBox = new JComboBox<>(new String[]{"Sunny", "Cloudy", "Stormy"});
         btnBuildArena = new JButton("Build Arena");
         arenaPanel.add(LBuildArena);
+        arenaPanel.add(LType);
+        arenaPanel.add(arenaType);
         arenaPanel.add(LLength);
         arenaPanel.add(txLength);
         arenaPanel.add(LSnowSurface);
@@ -63,5 +69,10 @@ public class View_ArenaPanel extends JPanel{
     public JPanel getarenaPanel(){
         return arenaPanel;
     }
+
+    public JComboBox<String> getArenaType() {
+        return arenaType;
+    }
+
 
 }

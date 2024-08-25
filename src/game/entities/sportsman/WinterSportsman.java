@@ -18,7 +18,7 @@ import utilities.Point;
 
 import javax.swing.*;
 
-public class WinterSportsman extends Sportsman implements Competitor {
+public /*abstract*/ class WinterSportsman extends Sportsman implements Competitor {
 
     //fields + ctor
     private static int GLOBAL_X = 0;
@@ -27,13 +27,14 @@ public class WinterSportsman extends Sportsman implements Competitor {
     private CustomObservable observable;
     private double newSpeed = 0;
     private JLabel icon;
+    protected int id;
 
 
-    public WinterSportsman(double maxSpeed, double acceleration, String name, double age, Gender gender, Discipline discipline){
+    public WinterSportsman(double maxSpeed, double acceleration, String name, double age, Gender gender, Discipline discipline,int id){
         super(maxSpeed, acceleration, name, age, gender);
         this.discipline = discipline;
         this.observable = new CustomObservable(this);
-
+        this.id = id;
         setAcceleration((getAcceleration() + League.calcAccelerationBonus(getAge())));
     }
 
@@ -121,5 +122,8 @@ public class WinterSportsman extends Sportsman implements Competitor {
 
     }
 
+    public int getID() { return id; }
+
+    public void setID(int id) { this.id = id; }
 
 }

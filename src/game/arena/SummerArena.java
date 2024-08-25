@@ -1,2 +1,4 @@
-package game.arena;public class SummerArena {
+package game.arena;
+
+public class SummerArena {
 }

@@ -1,6 +1,6 @@
 /**
  * @author Yuval Turgeman id: 209299205
- *  represensts a class of type VM_ArenaPanel. THIS IS MY ArenaFactory!
+ *  represensts a class of type ArenaFactory.
  *  this is the class that manages the creation of the arena.
  *  @input: parameters come from the GUI
  * @output: an instance of arena
@@ -16,7 +16,7 @@ import game.enums.WeatherCondition;
 
 import javax.swing.*;
 
-public class VM_ArenaPanel {
+public class ArenaFactory {
     private IArena arena;
 
     public IArena buildArena(String arenaType, String arenaLength, String snowSurface, String weatherConditions) {

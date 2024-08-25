@@ -10,7 +10,7 @@ package game.View;
 import game.GameEngine;
 import game.arena.IArena;
 import game.arena.WinterArena;
-import game.ViewModel.VM_ArenaPanel;
+import game.ViewModel.ArenaFactory;
 import game.ViewModel.VM_CompetitionPanel;
 import game.ViewModel.VM_CompetitorPanel;
 import game.competition.Competition;
@@ -41,7 +41,7 @@ public class ProgramWindow extends JFrame implements Observer {
     private View_CompetitorPanel viewCompetitorPanel;
     private View_StartInfoPanel viewStartInfoPanel;
     private VM_CompetitionPanel vm_competitionPanel;
-    private VM_ArenaPanel vm_arenaPanel;
+    private ArenaFactory arenaFactory;
     private VM_CompetitorPanel vm_competitorPanel;
     private ImagePanel field;
     private JFrame infoFrame;
@@ -51,6 +51,8 @@ public class ProgramWindow extends JFrame implements Observer {
     private Map<Competitor, JLabel> competitorIcons;
     private DefaultTableModel tableModel;
     private JTable showInfoTable;
+
+    private int competitorId;
 
     // Constructor
     public ProgramWindow() {
@@ -67,14 +69,16 @@ public class ProgramWindow extends JFrame implements Observer {
             JPanel info = new JPanel();
             info.setLayout(new GridLayout(0, 1, 5, 0));
 
-            vm_arenaPanel = new VM_ArenaPanel();
+            arenaFactory = new ArenaFactory();
             vm_competitorPanel = new VM_CompetitorPanel();
-            vm_competitionPanel = new VM_CompetitionPanel(vm_arenaPanel);
+            vm_competitionPanel = new VM_CompetitionPanel(arenaFactory);
 
             viewArenaPanel = new View_ArenaPanel();
             viewCompetitionPanel = new View_CompetitionPanel();
             viewCompetitorPanel = new View_CompetitorPanel();
             viewStartInfoPanel = new View_StartInfoPanel();
+
+
 
             //infoTable settings
             showInfoTable = new JTable();
@@ -142,16 +146,26 @@ public class ProgramWindow extends JFrame implements Observer {
                         clearCompetitorIcons();
                     }
 
-                    arena = vm_arenaPanel.buildArena(viewArenaPanel.getTxLength().getText(), (String) viewArenaPanel.getSurfaceBox().getSelectedItem(), (String) viewArenaPanel.getWeatherBox().getSelectedItem());
+                    if (competition != null && !competition.getIsFinished() && !competition.getIsRunning()) {
+                        competition = null;
+                    }
 
+                    arena = arenaFactory.buildArena((String)viewArenaPanel.getArenaType().getSelectedItem(), viewArenaPanel.getTxLength().getText(), (String) viewArenaPanel.getSurfaceBox().getSelectedItem(), (String) viewArenaPanel.getWeatherBox().getSelectedItem());
+                    //System.out.println(arena);
                     if (arena != null) {
                         setSize(new Dimension(1000, (int) ((WinterArena) arena).getLength()));
                         // Set the background image dynamically
                         field.setBackgroundImage(String.format("src/icons/%s.jpg", (String) viewArenaPanel.getWeatherBox().getSelectedItem()));
-                        field.repaint();
+                        clearCompetitorIcons(); // clears icons from screen
+                        JOptionPane.showMessageDialog(viewArenaPanel, "Arena Created Successfully");
+                        //System.out.println("Arena created successfully");
                     }
-                    JOptionPane.showMessageDialog(viewArenaPanel, "Arena Created Successfully");
-//                    System.out.println("Arena created successfully");
+                    else{
+//                        System.out.println(arena);
+                        field.setBackgroundImage(null);
+                    }
+                    field.repaint();
+
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(viewArenaPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -199,6 +213,49 @@ public class ProgramWindow extends JFrame implements Observer {
             }
         });
 
+        viewCompetitionPanel.getBtnCreateDefaultCompetition().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+
+
+                    if (competition != null && competition.getIsRunning()) {
+                        throw new RuntimeException("the race isnt over yet");
+                    }
+
+//                    if (competition != null && competition.getIsFinished()) {
+//                        if (arena == null)
+//                            throw new RuntimeException("Please create a new Arena first");
+//                    }
+                    String input = JOptionPane.showInputDialog(null, "Enter number of maximum competitors :", "Input Max Competitors", JOptionPane.QUESTION_MESSAGE);
+
+                    arena = arenaFactory.buildArena("Winter", "700","Powder","Sunny"); //use of ArenaFactory to build a default arena
+                    setSize(new Dimension(1000, (int) ((WinterArena) arena).getLength()));
+                    // Set the background image dynamically
+                    field.setBackgroundImage(String.format("src/icons/%s.jpg", (String) viewArenaPanel.getWeatherBox().getSelectedItem()));
+                    clearCompetitorIcons(); // clears icons from screen
+                    JOptionPane.showMessageDialog(viewArenaPanel, "Arena Created Successfully");
+                    //System.out.println("Arena created successfully");
+
+                    competition = vm_competitionPanel.createDefaultCompetition(input);
+
+
+                    if (competition != null) {
+                        clearCompetitorIcons(); // clears icons from screen
+                        if (competition.getMaxCompetitors() == 20) {
+                            setSize(new Dimension(1200, (int) ((WinterArena) arena).getLength()));
+                        }
+                        JOptionPane.showMessageDialog(viewCompetitionPanel, "Competition Created Successfully");
+//                        System.out.println("Competition created successfully");
+                    }
+                } catch (NullPointerException ex) {
+                    JOptionPane.showMessageDialog(viewCompetitionPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (RuntimeException ex) {
+                    JOptionPane.showMessageDialog(viewCompetitionPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         viewCompetitorPanel.getBtnAddCompetitor().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -227,7 +284,8 @@ public class ProgramWindow extends JFrame implements Observer {
                             viewCompetitorPanel.getAccelerationField().getText(),
                             ((WinterCompetition) vm_competitionPanel.getCompetition()).getGender(),
                             ((WinterCompetition) vm_competitionPanel.getCompetition()).getDiscipline(),
-                            vm_competitionPanel.getCompetition().getClass()
+                            vm_competitionPanel.getCompetition().getClass(),
+                            competitorId//todo:take care of competitorId resets and increase
                     );
 
                     competition.addCompetitor(competitor);

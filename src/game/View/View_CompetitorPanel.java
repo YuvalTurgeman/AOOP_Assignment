@@ -31,16 +31,16 @@ public class View_CompetitorPanel extends JPanel{
         JLabel LCompetitor = new JLabel("Add Competitor");
         JLabel LName = new JLabel("Name:");
         nameField = new JTextField();
-//        nameField.setText("asd"); // for testing addition of competitor functionality
+        nameField.setText("asd"); // for testing addition of competitor functionality
         JLabel LAge = new JLabel("Age:");
         ageField = new JTextField();
-//        ageField.setText("15");// for testing addition of competitor functionality
+        ageField.setText("15");// for testing addition of competitor functionality
         JLabel LMaxSpeed = new JLabel("Max Speed:");
         maxSpeedField = new JTextField();
-//        maxSpeedField.setText("15");// for testing addition of competitor functionality
+        maxSpeedField.setText("15");// for testing addition of competitor functionality
         JLabel LAcceleration = new JLabel("Acceleration:");
         accelerationField = new JTextField();
-//        accelerationField.setText("15");// for testing addition of competitor functionality
+        accelerationField.setText("15");// for testing addition of competitor functionality
         btnAddCompetitor = new JButton("Add Competitor");
         competitorPanel.add(LCompetitor);
         competitorPanel.add(LName);

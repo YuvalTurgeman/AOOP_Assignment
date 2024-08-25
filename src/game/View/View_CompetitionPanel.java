@@ -22,6 +22,8 @@ public class View_CompetitionPanel extends JPanel{
     private JButton btnCreateCompetition;
     private JPanel competitionPanel;
 
+    private JButton btnCreateDefaultCompetition;
+
 
     public View_CompetitionPanel(){
         Border lineBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
@@ -42,6 +44,7 @@ public class View_CompetitionPanel extends JPanel{
         JLabel LGender = new JLabel("Gender:");
         genderBox = new JComboBox<>(new String[]{"Male", "Female"});
         btnCreateCompetition = new JButton("Create Competition");
+        btnCreateDefaultCompetition = new JButton("Create Default Competition");
         competitionPanel.add(LCreateCompetition);
         competitionPanel.add(LChooseCompetition);
         competitionPanel.add(competitionBox);
@@ -54,6 +57,7 @@ public class View_CompetitionPanel extends JPanel{
         competitionPanel.add(LGender);
         competitionPanel.add(genderBox);
         competitionPanel.add(btnCreateCompetition);
+        competitionPanel.add(btnCreateDefaultCompetition);
 
     }
 
@@ -80,6 +84,10 @@ public class View_CompetitionPanel extends JPanel{
 
     public JButton getBtnCreateCompetition() {
         return btnCreateCompetition;
+    }
+
+    public JButton getBtnCreateDefaultCompetition() {
+        return btnCreateDefaultCompetition;
     }
 
     public JPanel getCompetitionPanel() {
