@@ -7,7 +7,6 @@
 package game.competition;
 
 import game.arena.WinterArena;
-import game.entities.sportsman.Skier;
 import game.entities.sportsman.Snowboarder;
 import game.enums.Discipline;
 import game.enums.Gender;

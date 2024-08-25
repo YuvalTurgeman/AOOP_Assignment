@@ -7,7 +7,7 @@ package game.entities;
 
 import utilities.Point;
 
-public interface IMobileEntity {
+public interface IMobileEntity extends Runnable{
 
     void move(double friction);
 

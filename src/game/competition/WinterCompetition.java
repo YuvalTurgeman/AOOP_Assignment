@@ -21,7 +21,7 @@ public class WinterCompetition extends Competition{
     private Gender gender;
 
 
-    public WinterCompetition(WinterArena arena, int maxCompetitors ,Discipline discipline, League league, Gender gender){
+    public WinterCompetition(WinterArena arena, int maxCompetitors , Discipline discipline, League league, Gender gender){
         super(arena, maxCompetitors);
         this.discipline = discipline;
         this.league = league;
@@ -68,6 +68,8 @@ public class WinterCompetition extends Competition{
                     getGender() == ((WinterCompetition)other).getGender();
         return true;
     }
+
+
 
 
     public String toString(){

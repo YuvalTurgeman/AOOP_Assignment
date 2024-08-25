@@ -17,7 +17,7 @@ public class Point {
 
     //ctor
     public Point(double x, double y) {
-        if(x < 0 || x>1000000 || y < 0 || y > 800)
+        if(x < 0 || x>1000000 || y < 0 || y > 100000)
             throw new IllegalArgumentException("Point coordinates out of bounds");
         this.x = x;
         this.y = y;
@@ -39,7 +39,7 @@ public class Point {
     }
 
     public void setY(double y){
-        if(y < 0 || y > 800)
+        if(y < 0 || y > 1000000)
             throw new IllegalArgumentException("Point coordinates out of bounds");
         this.y = y;
     }

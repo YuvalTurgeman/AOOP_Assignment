@@ -34,7 +34,7 @@ public class WinterArena implements IArena{
 
     @Override
     public Boolean isFinished(IMobileEntity me) {
-        return me.getLocation().getX()>=getLength();
+        return me.getLocation().getY()>=getLength();
     }
 
     //getters and setters

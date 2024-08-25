@@ -5,10 +5,13 @@
 
 package game.competition;
 
+import game.arena.IArena;
 import game.entities.IMobileEntity;
 
-public interface Competitor extends IMobileEntity {
 
-    void initRace();
+public interface Competitor extends IMobileEntity, Runnable {
 
+    void initRace(IArena arena);
+
+    void run(IArena arena);
 }
