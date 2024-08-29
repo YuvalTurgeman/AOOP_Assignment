@@ -32,6 +32,10 @@ public class Snowboarder extends WinterSportsman{
     }
 
     public String toString(){
-        return String.format("This is %s, %s, %s", this.getClass(), this.getName(), this.getLocation());
+        return String.format("id: %d, name: %s, %s", getID(), this.getName(), this.getLocation());
+    }
+
+    public Snowboarder clone(){
+        return new Snowboarder(getName(),getAge(),getGender(),getAcceleration(),getMaxSpeed(),getDiscipline(),getID());
     }
 }

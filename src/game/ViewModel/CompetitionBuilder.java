@@ -18,12 +18,12 @@ import game.enums.Discipline;
 import game.enums.Gender;
 import game.enums.League;
 
-public class VM_CompetitionPanel {
+public class CompetitionBuilder {
     private ArenaFactory arenaFactory;
     private Competition competition;
 
 
-    public VM_CompetitionPanel(ArenaFactory arena){
+    public CompetitionBuilder(ArenaFactory arena){
         this.arenaFactory = arena;
     }
 

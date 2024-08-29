@@ -14,4 +14,6 @@ public interface Competitor extends IMobileEntity, Runnable {
     void initRace(IArena arena);
 
     void run(IArena arena);
+
+    void setId(int id);
 }

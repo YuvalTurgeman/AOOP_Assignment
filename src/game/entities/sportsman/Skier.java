@@ -33,7 +33,11 @@ public class Skier extends WinterSportsman {
     }
 
     public String toString(){
-        return String.format("This is %s, %s, %s", this.getClass(), this.getName(), this.getLocation());
+        return String.format("id: %d, %s, %s", getID(), this.getName(), this.getLocation());
     }
 
+    @Override
+    public Skier clone(){
+        return new Skier(getName(),getAge(),getGender(),getAcceleration(),getMaxSpeed(),getDiscipline(),getID());
+    }
 }

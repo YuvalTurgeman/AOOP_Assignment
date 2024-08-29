@@ -40,4 +40,8 @@ public class VM_CompetitorPanel {
                 5, 25, Discipline.SLALOM, id);
         return competitor;
     }
+
+//    public Competitor cloneCompetitor(Competitor toClone){
+//        Competitor competitor
+//    }
 }

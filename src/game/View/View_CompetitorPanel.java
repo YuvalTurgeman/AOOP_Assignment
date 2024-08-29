@@ -1,6 +1,6 @@
 /**
  * @author Yuval Turgeman id: 209299205
- *  represensts a class of type View_CompetitorPanel, extends JPanel.
+ *  represensts a class of type View_CompetitorPanel, extends JPanel, THIS IS MY PROTOTYPE DP.
  *  this is the class that manages the creation of the Competitor Panel.
  * @methods: ctor, getNameField, getAgeField, getMaxSpeedField, getAccelerationField, getBtnAddCompetitor, getCompetitorPanel.
  **/
@@ -23,6 +23,9 @@ public class View_CompetitorPanel extends JPanel{
     private JButton btnAddCompetitor;
     private JPanel competitorPanel;
 
+    private JButton btnCloneCompetitor;
+    private JButton btnDecorateCompetitor;
+
     public View_CompetitorPanel() {
         Border lineBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
         // Competitor Panel
@@ -42,6 +45,8 @@ public class View_CompetitorPanel extends JPanel{
         accelerationField = new JTextField();
         accelerationField.setText("15");// for testing addition of competitor functionality
         btnAddCompetitor = new JButton("Add Competitor");
+        btnCloneCompetitor = new JButton("Clone Competitor");
+        btnDecorateCompetitor = new JButton("Decorate Competitor");
         competitorPanel.add(LCompetitor);
         competitorPanel.add(LName);
         competitorPanel.add(nameField);
@@ -52,6 +57,8 @@ public class View_CompetitorPanel extends JPanel{
         competitorPanel.add(LAcceleration);
         competitorPanel.add(accelerationField);
         competitorPanel.add(btnAddCompetitor);
+        competitorPanel.add(btnCloneCompetitor);
+        competitorPanel.add(btnDecorateCompetitor);
 
     }
 
@@ -78,4 +85,8 @@ public class View_CompetitorPanel extends JPanel{
     public JPanel getCompetitorPanel(){
         return competitorPanel;
     }
+
+    public JButton getBtnCloneCompetitor(){ return btnCloneCompetitor;}
+
+    public JButton getBtnDecorateCompetitor(){ return btnDecorateCompetitor;}
 }
