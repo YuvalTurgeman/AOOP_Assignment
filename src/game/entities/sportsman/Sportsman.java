@@ -16,6 +16,7 @@ public abstract class Sportsman extends MobileEntity {
     private double age;
     private Gender gender;
 
+
     public Sportsman(double maxSpeed, double acceleration, String name, double age, Gender gender){
         super(maxSpeed,acceleration);
         this.name = name;

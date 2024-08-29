@@ -11,6 +11,8 @@ import game.arena.IArena;
 import game.arena.WinterArena;
 import game.competition.Competitor;
 import game.competition.CustomObservable;
+import game.entities.State.Active;
+import game.entities.State.State;
 import game.enums.Discipline;
 import game.enums.Gender;
 import game.enums.League;
@@ -18,7 +20,7 @@ import utilities.Point;
 
 import javax.swing.*;
 
-public class WinterSportsman extends Sportsman implements Competitor {
+public /*abstract*/ class WinterSportsman extends Sportsman implements Competitor {
 
     //fields + ctor
     private static int GLOBAL_X = 0;
@@ -27,14 +29,21 @@ public class WinterSportsman extends Sportsman implements Competitor {
     private CustomObservable observable;
     private double newSpeed = 0;
     private JLabel icon;
+    private int id;
+    private State state;
 
+    public WinterSportsman(){
+        super(10,2,"default",10,Gender.MALE);//todo:never used, just so i can make the method "clone" here and be overridden, maybe unnecessary
+        this.state = new Active();
+    };
 
-    public WinterSportsman(double maxSpeed, double acceleration, String name, double age, Gender gender, Discipline discipline){
+    public WinterSportsman(double maxSpeed, double acceleration, String name, double age, Gender gender, Discipline discipline,int id){
         super(maxSpeed, acceleration, name, age, gender);
         this.discipline = discipline;
         this.observable = new CustomObservable(this);
-
+        this.id = id;
         setAcceleration((getAcceleration() + League.calcAccelerationBonus(getAge())));
+        this.state = new Active();
     }
 
     //methods
@@ -47,6 +56,12 @@ public class WinterSportsman extends Sportsman implements Competitor {
 
     public void setIcon(JLabel icon){
         this.icon = icon;
+    }
+
+    public WinterSportsman clone(){return new WinterSportsman();};// will be overridden
+
+    public void setId(int id){
+        this.id = id;
     }
 
     @Override
@@ -121,5 +136,12 @@ public class WinterSportsman extends Sportsman implements Competitor {
 
     }
 
+    public int getID() { return id; }
+
+    public void setID(int id) { this.id = id; }
+
+    public State getState(){
+        return state;
+    }
 
 }

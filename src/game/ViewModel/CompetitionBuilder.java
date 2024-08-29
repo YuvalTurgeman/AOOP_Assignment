@@ -18,13 +18,13 @@ import game.enums.Discipline;
 import game.enums.Gender;
 import game.enums.League;
 
-public class VM_CompetitionPanel {
-    private VM_ArenaPanel vm_arenaPanel;
+public class CompetitionBuilder {
+    private ArenaFactory arenaFactory;
     private Competition competition;
 
 
-    public VM_CompetitionPanel(VM_ArenaPanel arena){
-        this.vm_arenaPanel = arena;
+    public CompetitionBuilder(ArenaFactory arena){
+        this.arenaFactory = arena;
     }
 
     public Competition createCompetition(String maxCompetitors, String competitionType, String discipline, String league, String gender){
@@ -40,7 +40,7 @@ public class VM_CompetitionPanel {
                 League league1 = League.convert(league);
                 Gender gender1 = Gender.convert(gender);
 
-                IArena arena = vm_arenaPanel.getArena();
+                IArena arena = arenaFactory.getArena();
                 switch (competitionType){
                     case "Ski":
                     competition = new SkiCompetition((WinterArena) arena, maxCompetitorsInt ,discipline1,league1,gender1);
@@ -60,6 +60,14 @@ public class VM_CompetitionPanel {
             }
             return null;
         }
+    }
+
+    public Competition createDefaultCompetition(String maxCompetitors) {
+
+
+        competition = createCompetition(maxCompetitors,"Ski","Slalom","Junior","Male");
+
+        return competition;
     }
 
     public Competition getCompetition() {

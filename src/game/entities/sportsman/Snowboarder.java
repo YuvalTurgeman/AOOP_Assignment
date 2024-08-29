@@ -12,8 +12,8 @@ import game.enums.Gender;
 public class Snowboarder extends WinterSportsman{
 
     //ctor
-    public Snowboarder(String name, double age, Gender gender, double acceleration, double maxSpeed, Discipline discipline) {
-        super(maxSpeed, acceleration, name, age, gender, discipline);
+    public Snowboarder(String name, double age, Gender gender, double acceleration, double maxSpeed, Discipline discipline, int id) {
+        super(maxSpeed, acceleration, name, age, gender, discipline, id);
     }
 
     //equals + toString
@@ -32,6 +32,10 @@ public class Snowboarder extends WinterSportsman{
     }
 
     public String toString(){
-        return String.format("This is %s, %s, %s", this.getClass(), this.getName(), this.getLocation());
+        return String.format("id: %d, name: %s, %s", getID(), this.getName(), this.getLocation());
+    }
+
+    public Snowboarder clone(){
+        return new Snowboarder(getName(),getAge(),getGender(),getAcceleration(),getMaxSpeed(),getDiscipline(),getID());
     }
 }

@@ -10,8 +10,8 @@ package game.View;
 import game.GameEngine;
 import game.arena.IArena;
 import game.arena.WinterArena;
-import game.ViewModel.VM_ArenaPanel;
-import game.ViewModel.VM_CompetitionPanel;
+import game.ViewModel.ArenaFactory;
+import game.ViewModel.CompetitionBuilder;
 import game.ViewModel.VM_CompetitorPanel;
 import game.competition.Competition;
 import game.competition.Competitor;
@@ -20,6 +20,7 @@ import game.competition.WinterCompetition;
 import game.entities.sportsman.WinterSportsman;
 import game.enums.Gender;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -28,8 +29,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -40,8 +44,8 @@ public class ProgramWindow extends JFrame implements Observer {
     private View_CompetitionPanel viewCompetitionPanel;
     private View_CompetitorPanel viewCompetitorPanel;
     private View_StartInfoPanel viewStartInfoPanel;
-    private VM_CompetitionPanel vm_competitionPanel;
-    private VM_ArenaPanel vm_arenaPanel;
+    private CompetitionBuilder competitionBuilder;
+    private ArenaFactory arenaFactory;
     private VM_CompetitorPanel vm_competitorPanel;
     private ImagePanel field;
     private JFrame infoFrame;
@@ -51,6 +55,25 @@ public class ProgramWindow extends JFrame implements Observer {
     private Map<Competitor, JLabel> competitorIcons;
     private DefaultTableModel tableModel;
     private JTable showInfoTable;
+
+    private Integer competitorId;
+
+    //////test:
+    private JComboBox<String> activeCompetitorsComboBox;
+    private JDialog activeCompetitorsDialog;
+    private JButton regularClone;
+    private JButton cancelBtn;
+    private JPanel buttonsPanel;
+
+//    private JDialog activeCompetitorsDialog;
+//    private JComboBox<Competitor> activeCompetitorsComboBox;
+    private JPanel decoratorTypesPanel;
+    private JButton speedyBtn;
+    private JButton coloredBtn;
+    private JButton coloredClone;
+    private JButton speedyClone;
+
+
 
     // Constructor
     public ProgramWindow() {
@@ -67,18 +90,20 @@ public class ProgramWindow extends JFrame implements Observer {
             JPanel info = new JPanel();
             info.setLayout(new GridLayout(0, 1, 5, 0));
 
-            vm_arenaPanel = new VM_ArenaPanel();
+            arenaFactory = new ArenaFactory();
             vm_competitorPanel = new VM_CompetitorPanel();
-            vm_competitionPanel = new VM_CompetitionPanel(vm_arenaPanel);
+            competitionBuilder = new CompetitionBuilder(arenaFactory);
 
             viewArenaPanel = new View_ArenaPanel();
             viewCompetitionPanel = new View_CompetitionPanel();
             viewCompetitorPanel = new View_CompetitorPanel();
             viewStartInfoPanel = new View_StartInfoPanel();
 
+
+
             //infoTable settings
             showInfoTable = new JTable();
-            tableModel = new DefaultTableModel(new Object[]{"Position", "Name", "Speed", "Max Speed", "Location", "Finished"}, 0);
+            tableModel = new DefaultTableModel(new Object[]{"id", "Position", "Name", "Speed", "Max Speed", "Location", "Finished"}, 0);
             showInfoTable.setModel(tableModel);
             TableColumnModel columnModel = showInfoTable.getColumnModel();
             columnModel.getColumn(0).setPreferredWidth(20);             // Position Column
@@ -114,14 +139,7 @@ public class ProgramWindow extends JFrame implements Observer {
             field.revalidate();
             field.repaint();
 
-            //printing of the movement of the icons, for developer
-//            if (icon != null) {
-//                SwingUtilities.invokeLater(() -> {
-//                    // Ensure the position is updated correctly
-//                    java.awt.Point newPosition = convertToPoint(competitor.getLocation());
-//                    System.out.println("Updated icon position to: " + newPosition);
-//                });
-//            }
+
         }
         updateInfoTable();
     }
@@ -142,20 +160,29 @@ public class ProgramWindow extends JFrame implements Observer {
                         clearCompetitorIcons();
                     }
 
-                    arena = vm_arenaPanel.buildArena(viewArenaPanel.getTxLength().getText(), (String) viewArenaPanel.getSurfaceBox().getSelectedItem(), (String) viewArenaPanel.getWeatherBox().getSelectedItem());
+                    if (competition != null && !competition.getIsFinished() && !competition.getIsRunning()) {
+                        competition = null;
+                    }
 
+                    arena = arenaFactory.buildArena((String) viewArenaPanel.getArenaType().getSelectedItem(), viewArenaPanel.getTxLength().getText(), (String) viewArenaPanel.getSurfaceBox().getSelectedItem(), (String) viewArenaPanel.getWeatherBox().getSelectedItem());
+                    //System.out.println(arena);
                     if (arena != null) {
                         setSize(new Dimension(1000, (int) ((WinterArena) arena).getLength()));
                         // Set the background image dynamically
                         field.setBackgroundImage(String.format("src/icons/%s.jpg", (String) viewArenaPanel.getWeatherBox().getSelectedItem()));
-                        field.repaint();
+                        clearCompetitorIcons(); // clears icons from screen
+                        JOptionPane.showMessageDialog(viewArenaPanel, "Arena Created Successfully");
+                        //System.out.println("Arena created successfully");
+                    } else {
+//                        System.out.println(arena);
+                        field.setBackgroundImage(null);
                     }
-                    JOptionPane.showMessageDialog(viewArenaPanel, "Arena Created Successfully");
-//                    System.out.println("Arena created successfully");
+                    field.repaint();
+//                    updateInfoTable();
+
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(viewArenaPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     JOptionPane.showMessageDialog(viewArenaPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -178,16 +205,18 @@ public class ProgramWindow extends JFrame implements Observer {
                             throw new RuntimeException("Please create a new Arena first");
                     }
 
-                    competition = vm_competitionPanel.createCompetition(viewCompetitionPanel.getMaxCompetitorsField().getText(), (String) viewCompetitionPanel.getCompetitionBox().getSelectedItem(),
+                    competition = competitionBuilder.createCompetition(viewCompetitionPanel.getMaxCompetitorsField().getText(), (String) viewCompetitionPanel.getCompetitionBox().getSelectedItem(),
                             (String) viewCompetitionPanel.getDisciplineBox().getSelectedItem(), (String) viewCompetitionPanel.getLeagueBox().getSelectedItem(), (String) viewCompetitionPanel.getGenderBox().getSelectedItem());
 
 
                     if (competition != null) {
                         clearCompetitorIcons(); // clears icons from screen
+                        competitorId = 1;
                         if (competition.getMaxCompetitors() == 20) {
                             setSize(new Dimension(1200, (int) ((WinterArena) arena).getLength()));
                         }
                         JOptionPane.showMessageDialog(viewCompetitionPanel, "Competition Created Successfully");
+                        updateInfoTable();
 //                        System.out.println("Competition created successfully");
                     }
                 } catch (NullPointerException ex) {
@@ -199,6 +228,69 @@ public class ProgramWindow extends JFrame implements Observer {
             }
         });
 
+        viewCompetitionPanel.getBtnCreateDefaultCompetition().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+
+
+                    if (competition != null && competition.getIsRunning()) {
+                        throw new RuntimeException("the race isnt over yet");
+                    }
+
+
+
+                    String input = JOptionPane.showInputDialog(null, "Enter number of maximum competitors :", "Input Max Competitors", JOptionPane.QUESTION_MESSAGE);
+                    if (input.isEmpty()) {
+                        JOptionPane.showMessageDialog(viewCompetitionPanel, "please specify max competitors!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    //todo:handle cancel of default competition
+
+
+                    arena = arenaFactory.buildArena("Winter", "700", "Powder", "Sunny"); //use of ArenaFactory to build a default arena
+                    setSize(new Dimension(1000, (int) ((WinterArena) arena).getLength()));
+                    // Set the background image dynamically
+                    field.setBackgroundImage(String.format("src/icons/%s.jpg", (String) viewArenaPanel.getWeatherBox().getSelectedItem()));
+                    clearCompetitorIcons(); // clears icons from screen
+                    JOptionPane.showMessageDialog(viewArenaPanel, "Arena Created Successfully");
+                    //System.out.println("Arena created successfully");
+
+                    competition = competitionBuilder.createDefaultCompetition(input);
+
+
+                    if (competition != null) {
+                        clearCompetitorIcons(); // clears icons from screen
+                        competitorId = 1;
+                        if (competition.getMaxCompetitors() == 20) {
+                            setSize(new Dimension(1200, (int) ((WinterArena) arena).getLength()));
+                        }
+
+                        for (int i = 0; i < competition.getMaxCompetitors(); i++) {
+                            Competitor competitor = vm_competitorPanel.createDefaultCompetitor("Default_Name_" + String.valueOf(competitorId), competitorId);
+                            competition.addCompetitor(competitor);
+
+                            // Add the competitor icon
+                            String iconPath = determineIconPath(competitor);
+                            setCompetitorIcon(competitor, iconPath);
+                            System.out.println(competition.getActiveCompetitors().size());
+//                            updateInfoTable();
+                            competitorId++;
+                        }
+
+
+                        JOptionPane.showMessageDialog(viewCompetitionPanel, "Competition Created Successfully");
+                        updateInfoTable();
+//                        System.out.println("Competition created successfully");
+                    }
+                } catch (NullPointerException ex) {
+                    JOptionPane.showMessageDialog(viewCompetitionPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (RuntimeException ex) {
+                    JOptionPane.showMessageDialog(viewCompetitionPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         viewCompetitorPanel.getBtnAddCompetitor().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -207,17 +299,15 @@ public class ProgramWindow extends JFrame implements Observer {
                         throw new NullPointerException("cannot add competitor because arena does not exist");
                     if (competition == null)
                         throw new NullPointerException("cannot add competitor because competition does not exist");
-
                     if (competition != null && competition.getIsRunning()) {
-                        throw new RuntimeException("the race isnt over yet");
+                        throw new RuntimeException("the race isn't over yet");
                     }
-
                     if (competition != null && competition.getIsFinished()) {
                         throw new RuntimeException("Please create a new competition first");
                     }
 
 
-                    if(!((WinterCompetition)competition).getLeague().isInLeague(Double.parseDouble(viewCompetitorPanel.getAgeField().getText())))
+                    if (!((WinterCompetition) competition).getLeague().isInLeague(Double.parseDouble(viewCompetitorPanel.getAgeField().getText())))
                         throw new RuntimeException("Competitor age out of bounds");
 
                     Competitor competitor = vm_competitorPanel.createCompetitor(
@@ -225,16 +315,24 @@ public class ProgramWindow extends JFrame implements Observer {
                             viewCompetitorPanel.getAgeField().getText(),
                             viewCompetitorPanel.getMaxSpeedField().getText(),
                             viewCompetitorPanel.getAccelerationField().getText(),
-                            ((WinterCompetition) vm_competitionPanel.getCompetition()).getGender(),
-                            ((WinterCompetition) vm_competitionPanel.getCompetition()).getDiscipline(),
-                            vm_competitionPanel.getCompetition().getClass()
+                            ((WinterCompetition) competitionBuilder.getCompetition()).getGender(),
+                            ((WinterCompetition) competitionBuilder.getCompetition()).getDiscipline(),
+                            competitionBuilder.getCompetition().getClass(),
+                            competitorId++//todo:take care of competitorId resets and increase. i think i did but make sure
                     );
 
+
                     competition.addCompetitor(competitor);
+                    System.out.println("acceleration: " + ((WinterSportsman) competitor).getAcceleration());
+
+
                     // Add the competitor icon
                     String iconPath = determineIconPath(competitor);
                     setCompetitorIcon(competitor, iconPath);
                     System.out.println(competition.getActiveCompetitors().size());
+                    System.out.println(competitorIcons.size());
+//                    System.out.println(competitorIcons);
+                    updateInfoTable();
 
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(viewCompetitorPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -243,10 +341,127 @@ public class ProgramWindow extends JFrame implements Observer {
             }
         });
 
+        viewCompetitorPanel.getBtnCloneCompetitor().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (arena == null)
+                        throw new NullPointerException("cannot clone competitor because arena does not exist");
+                    if (competition == null)
+                        throw new NullPointerException("cannot clone competitor because competition does not exist");
+                    if (competition != null && competition.getIsRunning()) {
+                        throw new RuntimeException("the race isn't over yet");
+                    }
+                    if (competition != null && competition.getIsFinished()) {
+                        throw new RuntimeException("Please create a new competition first");
+                    }
+                    if (competition.getActiveCompetitors().isEmpty())
+                        throw new RuntimeException("Please create a competitor before attempting to clone");
+
+
+
+
+                    activeCompetitorsComboBox = new JComboBox(getActiveCompetitorNames());
+                    activeCompetitorsDialog = new JDialog();
+                    regularClone = new JButton("Regular");
+                    coloredClone = new JButton("colored");
+                    speedyClone = new JButton("Speedy");
+                    cancelBtn = new JButton("Cancel");
+                    activeCompetitorsDialog.add(activeCompetitorsComboBox, BorderLayout.CENTER);
+                    buttonsPanel = new JPanel(new FlowLayout());
+                    buttonsPanel.add(regularClone);
+                    buttonsPanel.add(coloredClone);
+                    buttonsPanel.add(speedyClone);
+                    buttonsPanel.add(cancelBtn);
+                    activeCompetitorsDialog.add(buttonsPanel, BorderLayout.SOUTH);
+                    activeCompetitorsDialog.pack();
+                    activeCompetitorsDialog.setVisible(true);
+                    int indexSelected = activeCompetitorsComboBox.getSelectedIndex();
+
+
+                    cancelBtn.addActionListener(cancel -> {
+                        activeCompetitorsDialog.dispose();
+                    });
+
+                    coloredClone.addActionListener(cc -> {
+                        regularCloneCompetitor(indexSelected);
+                        colorCompetitor(competition.getActiveCompetitors().size()-1);
+                    });
+                    speedyClone.addActionListener(sc -> {
+                        regularCloneCompetitor(indexSelected);
+                        speedyCompetitor(competition.getActiveCompetitors().size()-1);
+                    });
+
+
+                    regularClone.addActionListener(rg -> regularCloneCompetitor(indexSelected));
+
+
+//                    System.out.println("attempting to clone");
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(viewCompetitorPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        viewCompetitorPanel.getBtnDecorateCompetitor().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (arena == null)
+                        throw new NullPointerException("cannot decorate competitor because arena does not exist");
+                    if (competition == null)
+                        throw new NullPointerException("cannot decorate competitor because competition does not exist");
+                    if (competition != null && competition.getIsRunning()) {
+                        throw new RuntimeException("the race isn't over yet");
+                    }
+                    if (competition != null && competition.getIsFinished()) {
+                        throw new RuntimeException("Please create a new competition first");
+                    }
+                    if (competition.getActiveCompetitors().isEmpty())
+                        throw new RuntimeException("Please create a competitor before attempting to decorate");
+
+//                    JDialog activeCompetitorsDialog = new JDialog();
+//                    JComboBox<Competitor> activeCompetitorsComboBox = new JComboBox(getActiveCompetitorNames());//todo:change
+//                    JPanel decoratorTypesPanel = new JPanel(new FlowLayout());
+//                    JButton speedyBtn = new JButton("Speedy");
+//                    JButton coloredBtn = new JButton("Colored");
+//                    activeCompetitorsDialog.add(activeCompetitorsComboBox, BorderLayout.CENTER);
+//                    decoratorTypesPanel.add(speedyBtn);
+//                    decoratorTypesPanel.add(coloredBtn);
+//                    activeCompetitorsDialog.add(decoratorTypesPanel, BorderLayout.SOUTH);
+//                    activeCompetitorsDialog.pack();
+//                    activeCompetitorsDialog.setVisible(true);//todo:consider making a view_decorateCompetitorPanel
+
+                    activeCompetitorsDialog = new JDialog();
+                    activeCompetitorsComboBox = new JComboBox(getActiveCompetitorNames());//todo:change
+                    decoratorTypesPanel = new JPanel(new FlowLayout());
+                    speedyBtn = new JButton("Speedy");
+                    coloredBtn = new JButton("Colored");
+                    activeCompetitorsDialog.add(activeCompetitorsComboBox, BorderLayout.CENTER);
+                    decoratorTypesPanel.add(speedyBtn);
+                    decoratorTypesPanel.add(coloredBtn);
+                    activeCompetitorsDialog.add(decoratorTypesPanel, BorderLayout.SOUTH);
+                    activeCompetitorsDialog.pack();
+                    activeCompetitorsDialog.setVisible(true);//todo:consider making a view_decorateCompetitorPanel
+
+                    int indexSelected = activeCompetitorsComboBox.getSelectedIndex();
+
+                    speedyBtn.addActionListener(sb -> speedyCompetitor(indexSelected));
+                    coloredBtn.addActionListener(cb -> colorCompetitor(indexSelected));
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(viewCompetitorPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+        });
+
+
         viewStartInfoPanel.getBtnStartCompetition().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try{
+                try {
                     if (arena == null)
                         throw new NullPointerException("cannot start competition because arena does not exist");
                     if (competition == null)
@@ -322,6 +537,7 @@ public class ProgramWindow extends JFrame implements Observer {
     }
 
     private void setCompetitorIcon(Competitor competitor, String icon_path) {
+
         ImageIcon originalIcon = new ImageIcon(getClass().getResource(icon_path));
         Image scaledImage;
         JLabel iconLabel;
@@ -353,6 +569,7 @@ public class ProgramWindow extends JFrame implements Observer {
         ((WinterSportsman) competitor).getObservable().addObserver(this);
     }
 
+
     private java.awt.Point convertToPoint(utilities.Point point) {
         return new java.awt.Point((int) point.getX(), (int) point.getY());
     }
@@ -367,7 +584,7 @@ public class ProgramWindow extends JFrame implements Observer {
         SwingUtilities.invokeLater(() -> {
             // Ensure table model is initialized correctly
             if (tableModel.getColumnCount() != 6) {
-                tableModel.setColumnIdentifiers(new Object[]{"Position", "Name", "Speed", "Max Speed", "Location", "Finished"});
+                tableModel.setColumnIdentifiers(new Object[]{"id", "Position", "Name", "Speed", "Max Speed", "Location", "Finished"});
             }
 
             // Clear existing rows
@@ -379,6 +596,7 @@ public class ProgramWindow extends JFrame implements Observer {
                 for (Competitor cmp : competition.getActiveCompetitors()) {
                     WinterSportsman comp = (WinterSportsman) cmp;
                     Object[] rowData = {
+                            comp.getID(),
                             index++,
                             comp.getName(),
                             comp.getSpeed(),
@@ -397,6 +615,7 @@ public class ProgramWindow extends JFrame implements Observer {
                 for (Competitor cmp : competition.getFinishedCompetitors()) {
                     WinterSportsman comp = (WinterSportsman) cmp;
                     Object[] rowData = {
+                            comp.getID(),
                             index++,
                             comp.getName(),
                             comp.getSpeed(),
@@ -417,6 +636,142 @@ public class ProgramWindow extends JFrame implements Observer {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    private JComboBox<Competitor> getActiveCompetitorsComboBox() {
+        JComboBox<Competitor> comboBox = new JComboBox<>();
+        for (Competitor cmp : competition.getActiveCompetitors()) {
+            comboBox.addItem(cmp);
+        }
+        return comboBox;
+    }
+
+    private void modifyCompetitorIcon(Competitor competitor, String icon_path, Color newColor) {
+
+        BufferedImage originalImage;
+        try {
+            originalImage = ImageIO.read(getClass().getResource(icon_path));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return;  // Exit the method if the image can't be loaded
+        }
+
+        BufferedImage finalImage = originalImage;
+        if (newColor != null) {
+            // Create a new BufferedImage to store the recolored image
+            BufferedImage coloredImage = new BufferedImage(
+                    originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            // Replace colors in the image
+            for (int y = 0; y < originalImage.getHeight(); y++) {
+                for (int x = 0; x < originalImage.getWidth(); x++) {
+                    int pixel = originalImage.getRGB(x, y);
+                    int alpha = (pixel >> 24) & 0xff;
+
+                    if (alpha > 0) { // Only change non-transparent pixels
+                        coloredImage.setRGB(x, y, (newColor.getRGB() & 0x00FFFFFF) | (alpha << 24));
+                    } else {
+                        coloredImage.setRGB(x, y, pixel); // Preserve transparency
+                    }
+                }
+            }
+            finalImage = coloredImage;
+        }
+
+        Image scaledImage;
+        if (icon_path.charAt(12) == 'n') {  // Snowboard
+            scaledImage = finalImage.getScaledInstance(45, 45, Image.SCALE_SMOOTH);
+        } else {
+            scaledImage = finalImage.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
+        }
+
+        // Update the existing icon
+        JLabel iconLabel = competitorIcons.get(competitor);
+        iconLabel.setIcon(new ImageIcon(scaledImage));
+
+        field.revalidate();
+        field.repaint();
+    }
+
+    private String[] getActiveCompetitorNames() {
+        List<Competitor> competitors = competition.getActiveCompetitors();
+        String[] competitorNames = new String[competition.getActiveCompetitors().size()];
+
+        for (int i = 0; i < competition.getActiveCompetitors().size(); i++) {
+            competitorNames[i] = competition.getActiveCompetitors().get(i).toString();
+        }
+
+        return competitorNames;
+    }
+
+    private void colorCompetitor(int indexSelected){
+//        int indexSelected = activeCompetitorsComboBox.getSelectedIndex();
+        WinterSportsman selectedCompetitor = (WinterSportsman) competition.getActiveCompetitors().get(indexSelected);
+        Color chosenColor = JColorChooser.showDialog(null, "Choose a Color", Color.WHITE);
+
+        if (chosenColor == null) {
+            activeCompetitorsDialog.dispose();
+            return;//?
+        }
+
+        String competitor_icon_path;
+        competitor_icon_path = determineIconPath(selectedCompetitor);
+        modifyCompetitorIcon(selectedCompetitor, competitor_icon_path, chosenColor);
+        JOptionPane.showMessageDialog(null, "Decoration completed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        activeCompetitorsDialog.dispose();
+    }
+
+    private void speedyCompetitor(int indexSelected){
+//        int indexSelected = activeCompetitorsComboBox.getSelectedIndex();
+        WinterSportsman selectedCompetitor = (WinterSportsman) competition.getActiveCompetitors().get(indexSelected);
+        System.out.println(selectedCompetitor.getAcceleration());
+        String newAccelerationStr;
+        double newAcceleration = selectedCompetitor.getAcceleration();
+        // Prompt the user for input
+        newAccelerationStr = JOptionPane.showInputDialog(ProgramWindow.this,
+                "Enter Acceleration for the competitor:", "New Acceleration", JOptionPane.QUESTION_MESSAGE);
+
+        // Check if the user pressed Cancel or closed the dialog
+        if (newAccelerationStr == null) {
+            activeCompetitorsDialog.dispose();
+            return;//?
+        }
+
+        try {
+            // Try to parse the input to a double
+            newAcceleration = Double.parseDouble(newAccelerationStr);
+            JOptionPane.showMessageDialog(
+                    ProgramWindow.this,
+                    "Acceleration updated successfully!",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (NumberFormatException ex) {
+            // Handle invalid number format
+            JOptionPane.showMessageDialog(
+                    ProgramWindow.this,
+                    "Invalid input. Please enter a valid number.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+        selectedCompetitor.setAcceleration(newAcceleration);
+        System.out.println(selectedCompetitor.getAcceleration());
+
+        activeCompetitorsDialog.dispose();
+    }
+
+    private void regularCloneCompetitor(int indexSelected){
+//        int indexSelected = activeCompetitorsComboBox.getSelectedIndex();
+        Competitor selectedCompetitor = competition.getActiveCompetitors().get(indexSelected);
+        Competitor cloned = ((WinterSportsman) selectedCompetitor).clone();
+        cloned.setId(competitorId++);
+        competition.addCompetitor(cloned);
+        String iconPath = determineIconPath(cloned);
+        setCompetitorIcon(cloned, iconPath);
+        System.out.println(competition.getActiveCompetitors().size());
+        activeCompetitorsDialog.dispose();
+        updateInfoTable();
     }
 }
 

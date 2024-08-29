@@ -1,6 +1,6 @@
 /**
  * @author Yuval Turgeman id: 209299205
- *  represensts a class of type VM_ArenaPanel.
+ *  represensts a class of type ArenaFactory.
  *  this is the class that manages the creation of the arena.
  *  @input: parameters come from the GUI
  * @output: an instance of arena
@@ -14,16 +14,23 @@ import game.arena.WinterArena;
 import game.enums.SnowSurface;
 import game.enums.WeatherCondition;
 
-public class VM_ArenaPanel {
+import javax.swing.*;
+
+public class ArenaFactory {
     private IArena arena;
 
-    public IArena buildArena(String arenaLength, String snowSurface, String weatherConditions) {
+    public IArena buildArena(String arenaType, String arenaLength, String snowSurface, String weatherConditions) {
 
             if (arenaLength.isEmpty() || Integer.parseInt(arenaLength) < 700 || Integer.parseInt(arenaLength) > 900) {
                 throw new IllegalArgumentException("Invalid input values! Please try again. Arena Length must be between 700-900");
             }
 
         try {
+            if(arenaType.equals("Summer")) {
+                JOptionPane.showMessageDialog(null, "Summer Competition is not an option", "Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+
             double doubleArenaLength = Double.parseDouble(arenaLength);
             SnowSurface surface = SnowSurface.convert((String) snowSurface);
             WeatherCondition wc = WeatherCondition.convert((String) weatherConditions);
